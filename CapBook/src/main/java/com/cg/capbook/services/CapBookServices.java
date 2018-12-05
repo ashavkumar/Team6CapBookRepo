@@ -2,6 +2,7 @@ package com.cg.capbook.services;
 
 import java.util.List;
 
+import com.cg.capbook.beans.Friend;
 import com.cg.capbook.beans.Message;
 import com.cg.capbook.beans.Profile;
 import com.cg.capbook.exceptions.EmailAlreadyUsedException;
@@ -19,4 +20,5 @@ public interface CapBookServices {
 	void sendMessage(Message message);
 	List<Message> viewSentMessages(String emailId);
 	List<Message> viewReceivedMessages(String emailId);
+	public Friend addFriend(String toUserId,String fromUserId);
 }

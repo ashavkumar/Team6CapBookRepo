@@ -6,8 +6,11 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.cg.capbook.beans.Friend;
 import com.cg.capbook.beans.Message;
 import com.cg.capbook.beans.Profile;
+import com.cg.capbook.daoservices.FriendDAO;
 import com.cg.capbook.daoservices.MessageDAO;
 import com.cg.capbook.daoservices.ProfileDAO;
 import com.cg.capbook.exceptions.EmailAlreadyUsedException;
@@ -20,6 +23,8 @@ public class CapBookServicesImpl implements CapBookServices {
 	private ProfileDAO profileDAO;
 	@Autowired
 	private MessageDAO messageDAO;
+	@Autowired
+	private FriendDAO friendDAO;
 	static String sessionEmailId;
 	@Override
 	public void registerUser(Profile profile) throws EmailAlreadyUsedException {
@@ -64,8 +69,17 @@ public class CapBookServicesImpl implements CapBookServices {
 		Profile userProfile=profileDAO.findById(sessionEmailId).get();
 		Map<String, Profile> friends=new HashMap<>();
 		friends.put(friendProfile.getEmailId(), friendProfile);
-		userProfile.setFriends(friends);
+		//userProfile.setFriends(friends);
 		return ;
+	}
+	
+	public Friend addFriend(String toUserId,String fromUserId) {
+		Friend friend=friendDAO.checkFriendship(toUserId,fromUserId);
+		if(friend==null) {
+			friend=new Friend(toUserId,fromUserId);
+			friendDAO.save(friend);
+		}
+		return friend;
 	}
 	@Override
 	public void sendMessage(Message message) {

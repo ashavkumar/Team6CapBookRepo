@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cg.capbook.beans.Friend;
 import com.cg.capbook.beans.Message;
 import com.cg.capbook.beans.Profile;
 import com.cg.capbook.exceptions.EmailAlreadyUsedException;
@@ -74,6 +75,11 @@ public class CapBookController {
 						return new ResponseEntity<String>("User is Already Your Friend!!!",HttpStatus.BAD_REQUEST);
 					}
 					return new ResponseEntity<String>("Friend successfully added.",HttpStatus.OK);
+	}
+	@RequestMapping(value="/addFriendAnother",method=RequestMethod.POST,consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<Friend> addFriendAnother(@RequestBody Friend friend){			
+			friend=capBookServices.addFriend(friend.getFromUserId(),friend.getToUserId());
+		return new ResponseEntity<Friend>(friend,HttpStatus.OK);
 	}
 	@RequestMapping(value="/sendMessage",method=RequestMethod.POST,produces=MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> sendMessage(@RequestBody Message message){
