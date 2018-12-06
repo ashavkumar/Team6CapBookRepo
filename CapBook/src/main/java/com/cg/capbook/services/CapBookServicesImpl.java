@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.cg.capbook.beans.Friend;
 import com.cg.capbook.beans.Message;
 import com.cg.capbook.beans.Profile;
@@ -14,9 +13,12 @@ import com.cg.capbook.daoservices.FriendDAO;
 import com.cg.capbook.daoservices.MessageDAO;
 import com.cg.capbook.daoservices.ProfileDAO;
 import com.cg.capbook.exceptions.EmailAlreadyUsedException;
+import com.cg.capbook.exceptions.FriendshipAlreadyExistException;
 import com.cg.capbook.exceptions.InvalidEmailIdException;
 import com.cg.capbook.exceptions.InvalidPasswordException;
 import com.cg.capbook.exceptions.NoUserFoundException;
+import com.cg.capbook.exceptions.RequestAlreadyReceivedException;
+import com.cg.capbook.exceptions.RequestAlreadySentException;
 @Component("capBookServices")
 public class CapBookServicesImpl implements CapBookServices {
 	@Autowired
@@ -33,7 +35,7 @@ public class CapBookServicesImpl implements CapBookServices {
 		if(profileDAO.findById(profile.getEmailId()).isPresent())
 			throw new EmailAlreadyUsedException();
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");  
-	    Date today = new Date();
+		Date today = new Date();
 		profile.setDateOfJoining(formatter.format(today).toString());
 		profile.setPassword(codecServices.encrypt(profile.getPassword()));
 		System.out.println(profile.getPassword());
@@ -47,6 +49,21 @@ public class CapBookServicesImpl implements CapBookServices {
 		sessionEmailId=profile.getEmailId();
 		return profile1;
 	}
+	@Override
+	public String forgotPassword(String emailId) throws InvalidEmailIdException{
+		Profile profile=profileDAO.findById(emailId).orElseThrow(()->new InvalidEmailIdException());
+		return codecServices.decrypt(profile.getPassword());
+	}
+	
+	@Override
+	public String changePassword(String emailId,String oldPassword,String newPassword) throws InvalidEmailIdException, InvalidPasswordException{
+		Profile profile=profileDAO.findById(emailId).orElseThrow(()->new InvalidEmailIdException());
+		if(!oldPassword.equals(codecServices.decrypt(profile.getPassword())))
+			throw new InvalidPasswordException();
+		profileDAO.changePassword(codecServices.encrypt(newPassword),profile.getEmailId());
+		return newPassword;
+	}
+	
 	@Override
 	public Profile editProfile(Profile profile) throws InvalidEmailIdException {
 		Profile profile1=profileDAO.findById(profile.getEmailId()).orElseThrow(()->new InvalidEmailIdException());
@@ -62,6 +79,7 @@ public class CapBookServicesImpl implements CapBookServices {
 			profile1.setDesignation(profile.getDesignation());
 		return profileDAO.save(profile1);
 	}
+	@Override
 	public List<Profile> searchAllUsersByName(String userName) throws  NoUserFoundException{
 		List<Profile> listUser=profileDAO.searchAllUserByName(userName.toLowerCase());
 		if(listUser.isEmpty())
@@ -76,13 +94,33 @@ public class CapBookServicesImpl implements CapBookServices {
 		//userProfile.setFriends(friends);
 		return ;
 	}
-	
-	public Friend addFriend(String toUserId,String fromUserId) {
+	@Override
+	public Friend addFriend(String fromUserId,String toUserId) throws FriendshipAlreadyExistException, RequestAlreadyReceivedException, RequestAlreadySentException {
+		Friend friend=friendDAO.checkFriendship(fromUserId,toUserId);
+		Friend friend1=friendDAO.checkFriendship(toUserId,fromUserId);
+		if(friend==null && friend1==null){
+			friend=new Friend(toUserId,fromUserId);
+			friend=friendDAO.save(friend);
+			Profile profile=profileDAO.findById(fromUserId).get();
+			Map<Integer, Friend> friendMap=new HashMap<>();
+			friendMap.put(friend.getFriendId(), friend);
+			profile.setFriend(friendMap);
+		}
+		else if(friend==null)
+			throw new RequestAlreadyReceivedException();
+		else if(friend1==null)
+			throw new RequestAlreadySentException();
+		else
+			throw new FriendshipAlreadyExistException();
+		return friend;
+	}
+	@Override
+	public Friend acceptFriend(String fromUserId,String toUserId) {
 		Friend friend=friendDAO.checkFriendship(toUserId,fromUserId);
 		if(friend==null) {
 			friend=new Friend(toUserId,fromUserId);
 			friend=friendDAO.save(friend);
-			Profile profile=profileDAO.findById(fromUserId).get();
+			Profile profile=profileDAO.findById(toUserId).get();
 			Map<Integer, Friend> friendMap=new HashMap<>();
 			friendMap.put(friend.getFriendId(), friend);
 			profile.setFriend(friendMap);

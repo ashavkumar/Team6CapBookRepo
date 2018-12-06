@@ -19,4 +19,8 @@ public interface ProfileDAO extends JpaRepository<Profile, String>{
 	@Transactional
 	@Query(value="SELECT * FROM Profile WHERE LOWER(First_Name) LIKE ?1",nativeQuery=true)
 	public List<Profile> searchAllUserByName(String userName);
+	@Modifying
+	@Transactional
+	@Query(value="UPDATE Profile SET password=?1 WHERE email_Id=?2",nativeQuery=true)
+	public void changePassword(String newPassword,String emailId);
 }

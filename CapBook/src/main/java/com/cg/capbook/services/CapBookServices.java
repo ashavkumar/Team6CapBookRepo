@@ -1,16 +1,16 @@
 package com.cg.capbook.services;
-
 import java.util.List;
-
 import com.cg.capbook.beans.Friend;
 import com.cg.capbook.beans.Message;
 import com.cg.capbook.beans.Profile;
 import com.cg.capbook.exceptions.EmailAlreadyUsedException;
+import com.cg.capbook.exceptions.FriendshipAlreadyExistException;
 import com.cg.capbook.exceptions.InvalidEmailIdException;
 import com.cg.capbook.exceptions.InvalidPasswordException;
 import com.cg.capbook.exceptions.NoUserFoundException;
+import com.cg.capbook.exceptions.RequestAlreadyReceivedException;
+import com.cg.capbook.exceptions.RequestAlreadySentException;
 import com.cg.capbook.exceptions.UserAlreadyYourFriendException;
-
 public interface CapBookServices {
 	void registerUser(Profile profile) throws EmailAlreadyUsedException, EmailAlreadyUsedException;
 	Profile loginUser(Profile profile) throws InvalidEmailIdException,InvalidPasswordException;
@@ -20,8 +20,11 @@ public interface CapBookServices {
 	void sendMessage(Message message);
 	List<Message> viewSentMessages(String emailId);
 	List<Message> viewReceivedMessages(String emailId);
-	public Friend addFriend(String toUserId,String fromUserId);
+	public Friend addFriend(String toUserId,String fromUserId) throws FriendshipAlreadyExistException, RequestAlreadyReceivedException, RequestAlreadySentException;
 	Profile getProfile(String emailId) throws InvalidEmailIdException;
 	Profile insertProfilePic(byte[] profilePic);
 	byte[] fetchProfilePic();
+	Friend acceptFriend(String fromUserId, String toUserId);
+	String forgotPassword(String emailId) throws InvalidEmailIdException;
+	String changePassword(String emailId, String oldPassword,String newPassword) throws InvalidEmailIdException, InvalidPasswordException;
 }

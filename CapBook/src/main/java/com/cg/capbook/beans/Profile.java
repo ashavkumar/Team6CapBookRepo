@@ -185,6 +185,5 @@ public class Profile {
 				+ Arrays.toString(profilePic) + ", userBio=" + userBio + ", currentCity=" + currentCity
 				+ ", designation=" + designation + ", highestEducation=" + highestEducation + ", relationshipStatus="
 				+ relationshipStatus + "]";
-	}
-	
+	}	
 }
