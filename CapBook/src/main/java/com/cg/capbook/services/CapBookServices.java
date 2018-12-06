@@ -21,4 +21,7 @@ public interface CapBookServices {
 	List<Message> viewSentMessages(String emailId);
 	List<Message> viewReceivedMessages(String emailId);
 	public Friend addFriend(String toUserId,String fromUserId);
+	Profile getProfile(String emailId) throws InvalidEmailIdException;
+	Profile insertProfilePic(byte[] profilePic);
+	byte[] fetchProfilePic();
 }

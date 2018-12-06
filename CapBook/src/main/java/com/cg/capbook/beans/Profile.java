@@ -1,5 +1,8 @@
 package com.cg.capbook.beans;
+import java.util.Arrays;
 import java.util.Map;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -16,15 +19,18 @@ public class Profile {
 	private String gender;
 	private String homeTown;
 	private String dateOfJoining;
+	private String mobileNo;
 	//private Image profilePic;
+	@Column(columnDefinition="BLOB")
+	private byte[] profilePic;
 	private String userBio;
 	private String currentCity;
-	private String workPlace;
+	private String designation;
 	private String highestEducation;
 	private String relationshipStatus;
 	@OneToMany
 	@MapKey
-	private Map<String, Friend> friend;
+	private Map<Integer, Friend> friend;
 	@ManyToMany
 	@MapKey
 	private Map<Integer, Page> pages;
@@ -40,9 +46,9 @@ public class Profile {
 		super();
 	}
 	public Profile(String emailId, String password, String firstName, String lastName, String dateOfBirth,
-			String gender, String homeTown, String dateOfJoining, String userBio, String currentCity, String workPlace,
-			String highestEducation, String relationshipStatus, Map<String, Friend> friend, Map<Integer, Page> pages,
-			Map<Integer, Post> posts) {
+			String gender, String homeTown, String dateOfJoining, String mobileNo, byte[] profilePic, String userBio,
+			String currentCity, String designation, String highestEducation, String relationshipStatus,
+			Map<Integer, Friend> friend, Map<Integer, Page> pages, Map<Integer, Post> posts) {
 		super();
 		this.emailId = emailId;
 		this.password = password;
@@ -52,9 +58,11 @@ public class Profile {
 		this.gender = gender;
 		this.homeTown = homeTown;
 		this.dateOfJoining = dateOfJoining;
+		this.mobileNo = mobileNo;
+		this.profilePic = profilePic;
 		this.userBio = userBio;
 		this.currentCity = currentCity;
-		this.workPlace = workPlace;
+		this.designation = designation;
 		this.highestEducation = highestEducation;
 		this.relationshipStatus = relationshipStatus;
 		this.friend = friend;
@@ -109,6 +117,18 @@ public class Profile {
 	public void setDateOfJoining(String dateOfJoining) {
 		this.dateOfJoining = dateOfJoining;
 	}
+	public String getMobileNo() {
+		return mobileNo;
+	}
+	public void setMobileNo(String mobileNo) {
+		this.mobileNo = mobileNo;
+	}
+	public byte[] getProfilePic() {
+		return profilePic;
+	}
+	public void setProfilePic(byte[] profilePic) {
+		this.profilePic = profilePic;
+	}
 	public String getUserBio() {
 		return userBio;
 	}
@@ -121,11 +141,11 @@ public class Profile {
 	public void setCurrentCity(String currentCity) {
 		this.currentCity = currentCity;
 	}
-	public String getWorkPlace() {
-		return workPlace;
+	public String getDesignation() {
+		return designation;
 	}
-	public void setWorkPlace(String workPlace) {
-		this.workPlace = workPlace;
+	public void setDesignation(String designation) {
+		this.designation = designation;
 	}
 	public String getHighestEducation() {
 		return highestEducation;
@@ -139,10 +159,10 @@ public class Profile {
 	public void setRelationshipStatus(String relationshipStatus) {
 		this.relationshipStatus = relationshipStatus;
 	}
-	public Map<String, Friend> getFriend() {
+	public Map<Integer, Friend> getFriend() {
 		return friend;
 	}
-	public void setFriend(Map<String, Friend> friend) {
+	public void setFriend(Map<Integer, Friend> friend) {
 		this.friend = friend;
 	}
 	public Map<Integer, Page> getPages() {
@@ -161,8 +181,10 @@ public class Profile {
 	public String toString() {
 		return "Profile [emailId=" + emailId + ", password=" + password + ", firstName=" + firstName + ", lastName="
 				+ lastName + ", dateOfBirth=" + dateOfBirth + ", gender=" + gender + ", homeTown=" + homeTown
-				+ ", dateOfJoining=" + dateOfJoining + ", userBio=" + userBio + ", currentCity=" + currentCity
-				+ ", workPlace=" + workPlace + ", highestEducation=" + highestEducation + ", relationshipStatus="
+				+ ", dateOfJoining=" + dateOfJoining + ", mobileNo=" + mobileNo + ", profilePic="
+				+ Arrays.toString(profilePic) + ", userBio=" + userBio + ", currentCity=" + currentCity
+				+ ", designation=" + designation + ", highestEducation=" + highestEducation + ", relationshipStatus="
 				+ relationshipStatus + "]";
 	}
+	
 }

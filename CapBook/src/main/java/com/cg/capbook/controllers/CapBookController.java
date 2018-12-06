@@ -1,18 +1,36 @@
 package com.cg.capbook.controllers;
+import java.awt.Image;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 
+import javax.activation.FileTypeMap;
+import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.ImageInputStreamImpl;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpSession;
 
+import org.hibernate.service.Service;
+import org.omg.PortableServer.Servant;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cg.capbook.beans.Friend;
 import com.cg.capbook.beans.Message;
@@ -29,6 +47,7 @@ public class CapBookController {
 	
 	@Autowired
 	private CapBookServices capBookServices;
+
 	@RequestMapping(value="/registerUser",method=RequestMethod.POST,consumes=MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> registerUser(@RequestBody Profile profile){
 		try {
@@ -96,4 +115,23 @@ public class CapBookController {
 		List<Message> messages=capBookServices.viewReceivedMessages(emailId);
 		return new ResponseEntity<List<Message>>(messages,HttpStatus.OK);
 	}
+	
+    //@RequestMapping(value = "/setProfilePic", method = RequestMethod.POST,consumes = MediaType.ALL_VALUE)
+    @PostMapping(value="/setProfilePic",consumes= {MediaType.ALL_VALUE},produces=MediaType.ALL_VALUE)
+    public ResponseEntity<byte[]> setImage() throws IOException {
+    	System.out.println("Image");
+    	//File file=new File(image.getOriginalFilename());
+    	//System.out.println(file);
+    	//image.transferTo(file);@RequestParam("Image") MultipartFile image
+    	FileInputStream fin=new FileInputStream("D:\\Users\\ADM-IG-HWDLAB1D\\Downloads\\Shirley Setia.jpg");  
+        byte[] bytes = StreamUtils.copyToByteArray(fin);
+        capBookServices.insertProfilePic(bytes);
+        System.out.println(bytes);
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
+    }
+    
+    @RequestMapping(value = "/getProfilePic", method = RequestMethod.GET,produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getImage() throws IOException {
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(capBookServices.fetchProfilePic());
+    }
 }
