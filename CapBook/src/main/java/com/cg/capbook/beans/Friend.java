@@ -1,22 +1,28 @@
 package com.cg.capbook.beans;
 import java.util.Map;
-
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 @Entity
 public class Friend {
 	@Id
+	@GeneratedValue(strategy=GenerationType.SEQUENCE)
 	private int friendId;
 	private String fromUserId;
 	private String toUserId;
-	@ManyToOne
 	@MapKey
-	@JoinColumn(name="emailId")
-	private Profile profile;
+    @ManyToMany(fetch = FetchType.LAZY,
+    cascade = {
+        CascadeType.PERSIST,
+        CascadeType.MERGE
+    },
+    mappedBy = "friends")
+	private Map<String, Profile> profiles;
 	@ManyToMany
 	@MapKey
 	private Map<Integer, Message> messages;

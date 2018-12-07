@@ -24,7 +24,7 @@ import com.cg.capbook.exceptions.InvalidPasswordException;
 import com.cg.capbook.exceptions.NoUserFoundException;
 import com.cg.capbook.exceptions.RequestAlreadyReceivedException;
 import com.cg.capbook.exceptions.RequestAlreadySentException;
-import com.cg.capbook.exceptions.UserAlreadyYourFriendException;
+import com.cg.capbook.exceptions.UserAuthenticationFailedException;
 import com.cg.capbook.services.CapBookServices;
 @RestController
 @CrossOrigin
@@ -33,71 +33,60 @@ public class CapBookController {
 	private CapBookServices capBookServices;
 
 	@RequestMapping(value="/registerUser",method=RequestMethod.POST,consumes=MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> registerUser(@RequestBody Profile profile){
-		try {
-			capBookServices.registerUser(profile);
-		} catch (EmailAlreadyUsedException e) {
-			return new ResponseEntity<>("Email Already Used!!!",HttpStatus.EXPECTATION_FAILED);
-		}
-		return new ResponseEntity<>("Registered Successfully!!!Please Login using your credentials",HttpStatus.OK);
+	ResponseEntity<Profile> registerUser(@RequestBody Profile profile) throws EmailAlreadyUsedException{
+		profile=capBookServices.registerUser(profile);
+		return new ResponseEntity<Profile>(profile,HttpStatus.OK);
 	}	
 	@RequestMapping(value="/loginUser",method=RequestMethod.POST,consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> loginUser (@RequestBody Profile profile) {
-		try {
-			profile=capBookServices.loginUser(profile);
-		} catch (InvalidEmailIdException | InvalidPasswordException e) {
-			return new ResponseEntity<String>("Invalid EmailId/Password!!!Please Try Again",HttpStatus.BAD_REQUEST);
-		}
-		return new ResponseEntity<String>(profile.toString(),HttpStatus.OK);
+	ResponseEntity<Profile> loginUser (@RequestBody Profile profile) throws InvalidEmailIdException, InvalidPasswordException {
+		profile=capBookServices.loginUser(profile);	
+		return new ResponseEntity<Profile>(profile,HttpStatus.OK);
 	}
 	@RequestMapping(value="/forgotPassword",method=RequestMethod.POST,consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> forgotPassword(@RequestBody Profile profile) throws InvalidEmailIdException {
-			String password=capBookServices.forgotPassword(profile.getEmailId());
+	ResponseEntity<String> forgotPassword(@RequestBody Profile profile) throws InvalidEmailIdException, UserAuthenticationFailedException {
+		String password=capBookServices.forgotPassword(profile.getEmailId(),profile.getSecurityQuestion(),profile.getSecurityAnswer());
 		return new ResponseEntity<String>(password,HttpStatus.OK);
 	}
-	
-	@RequestMapping(value="/changePassword",method=RequestMethod.POST,consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> changePassword(@RequestParam("emailId") String emailId,@RequestParam("oldPassword") String oldPassword,@RequestParam("newPassword") String newPassword) throws InvalidEmailIdException, InvalidPasswordException {
+
+	@RequestMapping(value="/changePassword",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<Profile> changePassword(@RequestBody Profile profile) throws InvalidEmailIdException, InvalidPasswordException {
 		System.out.println("start");	
-		@SuppressWarnings("unused")
-			String password=capBookServices.changePassword(emailId,oldPassword,newPassword);
-			System.out.println("done");
-		return new ResponseEntity<String>("Wow-:)Your Password has been changed Successfully!!!",HttpStatus.OK);
+		capBookServices.changePassword(profile.getEmailId(),profile.getPassword());
+		System.out.println("done");
+		return new ResponseEntity<Profile>(profile,HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(value="/editProfile",method=RequestMethod.POST,consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> editProfile(@RequestBody Profile profile){	
-		try {
-			profile=capBookServices.editProfile(profile);
-		} catch (InvalidEmailIdException e) {
-			return new ResponseEntity<String>("Invalid EmailId!!!Please Try Again",HttpStatus.BAD_REQUEST);
-		}
-		return new ResponseEntity<String>(profile.toString(),HttpStatus.OK);
+	ResponseEntity<Profile> editProfile(@RequestBody Profile profile) throws InvalidEmailIdException{	
+		profile=capBookServices.editProfile(profile);
+		return new ResponseEntity<Profile>(profile,HttpStatus.OK);
 	}
 
 	@RequestMapping(value="/findUsers",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<List<Profile>> findUsers(@RequestParam String userName){	
+	ResponseEntity<List<Profile>> findUsers(@RequestParam String userName) throws NoUserFoundException{	
 		List<Profile>listUser=null;		
-		try {
-			listUser=capBookServices.searchAllUsersByName(userName);
-		} catch (NoUserFoundException e) {
-			return new ResponseEntity<List<Profile>>(listUser,HttpStatus.BAD_REQUEST);
-		}
+		listUser=capBookServices.searchAllUsersByName(userName);
 		return new ResponseEntity<List<Profile>>(listUser,HttpStatus.OK);
 	}
-	@RequestMapping(value="/addFriend",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> addFriend(@RequestParam String emailId){			
-		try {
-			capBookServices.friendRequest(emailId);
-		} catch (UserAlreadyYourFriendException e) {
-			return new ResponseEntity<String>("User is Already Your Friend!!!",HttpStatus.BAD_REQUEST);
-		}
-		return new ResponseEntity<String>("Friend successfully added.",HttpStatus.OK);
+	@RequestMapping(value="/addFriend",method=RequestMethod.POST,consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<Friend> addFriend(@RequestBody Friend friend) throws FriendshipAlreadyExistException, RequestAlreadyReceivedException, RequestAlreadySentException{			
+		friend=capBookServices.addFriend(friend.getFromUserId(),friend.getToUserId());
+		return new ResponseEntity<Friend>(friend,HttpStatus.OK);
 	}
-	@RequestMapping(value="/addFriendAnother",method=RequestMethod.POST,consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<Friend> addFriendAnother(@RequestBody Friend friend) throws FriendshipAlreadyExistException, RequestAlreadyReceivedException, RequestAlreadySentException{			
-			friend=capBookServices.addFriend(friend.getFromUserId(),friend.getToUserId());
-				return new ResponseEntity<Friend>(friend,HttpStatus.OK);
+	@RequestMapping(value="/acceptFriend",method=RequestMethod.POST,consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<Friend> acceptFriend(@RequestBody Friend friend) throws FriendshipAlreadyExistException, RequestAlreadyReceivedException, RequestAlreadySentException{			
+		friend=capBookServices.acceptFriend(friend.getFromUserId(),friend.getToUserId());
+		return new ResponseEntity<Friend>(friend,HttpStatus.OK);
+	}
+	@RequestMapping(value="/rejectFriend",method=RequestMethod.POST,consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<Friend> rejectFriend(@RequestBody Friend friend) throws FriendshipAlreadyExistException, RequestAlreadyReceivedException, RequestAlreadySentException{			
+		friend=capBookServices.rejectFriend(friend.getFromUserId(),friend.getToUserId());
+		return new ResponseEntity<Friend>(friend,HttpStatus.OK);
+	}
+	@RequestMapping(value="/getFriendList",method=RequestMethod.POST,consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<List<Profile>> getFriendList(@RequestBody Profile profile) throws FriendshipAlreadyExistException, RequestAlreadyReceivedException, RequestAlreadySentException{			
+		List<Profile>friendList=capBookServices.getFriendList(profile.getEmailId());
+		return new ResponseEntity<List<Profile>>(friendList,HttpStatus.OK);
 	}
 	@RequestMapping(value="/sendMessage",method=RequestMethod.POST,produces=MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> sendMessage(@RequestBody Message message){

@@ -12,6 +12,7 @@ import com.cg.capbook.exceptions.NoUserFoundException;
 import com.cg.capbook.exceptions.RequestAlreadyReceivedException;
 import com.cg.capbook.exceptions.RequestAlreadySentException;
 import com.cg.capbook.exceptions.UserAlreadyYourFriendException;
+import com.cg.capbook.exceptions.UserAuthenticationFailedException;
 @ControllerAdvice(basePackages= {"com.cg.capbook.controllers"})
 public class CapBookExceptionAspect {
 	@ExceptionHandler(RequestAlreadySentException.class)
@@ -52,6 +53,11 @@ public class CapBookExceptionAspect {
 	@ExceptionHandler(UserAlreadyYourFriendException.class)
 	public ResponseEntity<CustomResponse> handleUserAlreadyYourFriendException(Exception e){
 		CustomResponse response=new CustomResponse(HttpStatus.EXPECTATION_FAILED.value(),"Dost ko bhool gya!!!");
+		return new ResponseEntity<>(response,HttpStatus.EXPECTATION_FAILED);
+	}
+	@ExceptionHandler(UserAuthenticationFailedException.class)
+	public ResponseEntity<CustomResponse> handleUserAuthenticationFailedException(Exception e){
+		CustomResponse response=new CustomResponse(HttpStatus.EXPECTATION_FAILED.value(),"User Authentication Failed!!! Please try with valid details");
 		return new ResponseEntity<>(response,HttpStatus.EXPECTATION_FAILED);
 	}
 }
