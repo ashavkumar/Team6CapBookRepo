@@ -1,4 +1,5 @@
 package com.cg.capbook.controllers;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.cg.capbook.beans.Friend;
 import com.cg.capbook.beans.Message;
 import com.cg.capbook.beans.Profile;
@@ -26,12 +29,14 @@ import com.cg.capbook.exceptions.RequestAlreadyReceivedException;
 import com.cg.capbook.exceptions.RequestAlreadySentException;
 import com.cg.capbook.exceptions.UserAuthenticationFailedException;
 import com.cg.capbook.services.CapBookServices;
+import com.cg.capbook.services.StorageService;
 @RestController
 @CrossOrigin
 public class CapBookController {
 	@Autowired
 	private CapBookServices capBookServices;
-
+	@Autowired
+	private StorageService storageService;
 	@RequestMapping(value="/registerUser",method=RequestMethod.POST,consumes=MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<Profile> registerUser(@RequestBody Profile profile) throws EmailAlreadyUsedException{
 		profile=capBookServices.registerUser(profile);
@@ -104,7 +109,7 @@ public class CapBookController {
 		return new ResponseEntity<List<Message>>(messages,HttpStatus.OK);
 	}
 
-	//@RequestMapping(value = "/setProfilePic", method = RequestMethod.POST,consumes = MediaType.ALL_VALUE)
+	/*	//@RequestMapping(value = "/setProfilePic", method = RequestMethod.POST,consumes = MediaType.ALL_VALUE)
 	@PostMapping(value="/setProfilePic",consumes= {MediaType.ALL_VALUE},produces=MediaType.ALL_VALUE)
 	public ResponseEntity<byte[]> setImage() throws IOException {
 		System.out.println("Image");
@@ -112,6 +117,19 @@ public class CapBookController {
 		//System.out.println(file);
 		//image.transferTo(file);@RequestParam("Image") MultipartFile image
 		FileInputStream fin=new FileInputStream("D:\\Users\\ADM-IG-HWDLAB1D\\Downloads\\Shirley Setia.jpg");  
+		byte[] bytes = StreamUtils.copyToByteArray(fin);
+		capBookServices.insertProfilePic(bytes);
+		System.out.println(bytes);
+		return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
+	}
+	 */
+	@PostMapping(value="/setProfilePic",consumes= {MediaType.ALL_VALUE},produces=MediaType.ALL_VALUE)
+	public ResponseEntity<byte[]> setImage(@RequestParam("Image") MultipartFile image) throws IOException {
+		System.out.println("Image");
+		storageService.store(image);
+		File file=new File("D:\\159942_Neelam_Topno\\ANGULAR\\AngularApplications\\CapbookAngular\\src\\userImage"+image.getOriginalFilename());
+		image.transferTo(file);
+		FileInputStream fin=new FileInputStream(file);
 		byte[] bytes = StreamUtils.copyToByteArray(fin);
 		capBookServices.insertProfilePic(bytes);
 		System.out.println(bytes);
