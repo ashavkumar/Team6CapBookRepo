@@ -79,6 +79,12 @@ public class Post {
 	public void setComments(Map<Integer, Comment> comments) {
 		this.comments = comments;
 	}
+	public final Profile getProfile() {
+		return profile;
+	}
+	public final void setProfile(Profile profile) {
+		this.profile = profile;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

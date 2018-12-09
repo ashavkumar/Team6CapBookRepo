@@ -41,6 +41,9 @@ public class Profile {
 	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
 	@MapKey
 	private Map<Integer, Post> posts;
+	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
+	@MapKey
+	private Map<Integer, Album> albums;
 	public Profile() {
 		super();
 	}

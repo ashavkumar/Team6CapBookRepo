@@ -26,13 +26,15 @@ public interface CapBookServices {
 	Profile getProfile(String emailId) throws InvalidEmailIdException;
 	Profile insertProfilePic(byte[] profilePic);
 	byte[] fetchProfilePic();
+	List<Byte[]> fetchAlbumPic(String userName);
 	Friend acceptFriend(String fromUserId, String toUserId) throws RequestAlreadySentException;
 	Profile changePassword(String emailId,String newPassword) throws InvalidEmailIdException, InvalidPasswordException;
 	Friend rejectFriend(String fromUserId, String toUserId) throws RequestAlreadySentException;
 	public List<Profile> getFriendList(String emailId);
-	String forgotPassword(String emailId, String securityQuestion, String securityAnswer)throws InvalidEmailIdException, UserAuthenticationFailedException;
+	Profile forgotPassword(Profile profile)throws InvalidEmailIdException, UserAuthenticationFailedException;
 	Post createPost(Post post);
 	Post updatePostLikes(Post post);
 	Post updatePostDislikes(Post post);
 	Post addPostComment(Comment comment);
+	Profile insertAlbumPic(byte[] albumPic);
 }

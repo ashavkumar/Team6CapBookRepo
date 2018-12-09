@@ -8,11 +8,13 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.cg.capbook.beans.Album;
 import com.cg.capbook.beans.Comment;
 import com.cg.capbook.beans.Friend;
 import com.cg.capbook.beans.Message;
 import com.cg.capbook.beans.Post;
 import com.cg.capbook.beans.Profile;
+import com.cg.capbook.daoservices.AlbumDAO;
 import com.cg.capbook.daoservices.FriendDAO;
 import com.cg.capbook.daoservices.MessageDAO;
 import com.cg.capbook.daoservices.PostDAO;
@@ -36,6 +38,8 @@ public class CapBookServicesImpl implements CapBookServices {
 	@Autowired
 	private PostDAO postDAO;
 	@Autowired
+	private AlbumDAO albumDAO;
+	@Autowired
 	private CodecServices codecServices;
 	static String sessionEmailId;
 	@Override
@@ -58,10 +62,12 @@ public class CapBookServicesImpl implements CapBookServices {
 		return profile1;
 	}
 	@Override
-	public String forgotPassword(String emailId,String securityQuestion,String securityAnswer) throws InvalidEmailIdException, UserAuthenticationFailedException{
-		Profile profile=profileDAO.findById(emailId).orElseThrow(()->new InvalidEmailIdException());
-		if(securityQuestion.equals(profile.getSecurityQuestion()) && securityAnswer.equals(profile.getSecurityAnswer()))
-				return codecServices.decrypt(profile.getPassword());
+	public Profile forgotPassword(Profile profile) throws InvalidEmailIdException, UserAuthenticationFailedException{
+		Profile profile1=profileDAO.findById(profile.getEmailId()).orElseThrow(()->new InvalidEmailIdException());
+		if(profile.getSecurityQuestion().equals(profile1.getSecurityQuestion()) && profile.getSecurityAnswer().equals(profile1.getSecurityAnswer())) {
+			profile1.setPassword(codecServices.decrypt(profile1.getPassword()));
+			return profile1;
+		}
 		else
 				throw new UserAuthenticationFailedException();	
 	}
@@ -186,8 +192,10 @@ public class CapBookServicesImpl implements CapBookServices {
 	}
 	@Override
 	public Post createPost(Post post) {
-		postDAO.save(post);
-		return null;
+		Profile profile=profileDAO.findById(sessionEmailId).get();
+		post.setProfile(profile);
+		post=postDAO.save(post);
+		return post;
 	}
 	@Override
 	public Post updatePostLikes(Post post) {
@@ -207,5 +215,21 @@ public class CapBookServicesImpl implements CapBookServices {
 		//Map<Integer, Comment> commentMap=new HashMap<>(oldPost.getComments());
 		//commentMap.put(post.getComments()., value)
 		return null;
+	}
+	@Override
+	public Profile insertAlbumPic(byte[] albumPic) {
+		Profile profile=profileDAO.findById(sessionEmailId).get();
+		Album album=new Album();
+		album.setImage(albumPic);
+		album.setProfile(profile);
+		albumDAO.save(album);
+		return profile;
+	}
+	@Override
+	public List<Byte[]> fetchAlbumPic(String userName) {
+		List<Byte[]> pdu = new ArrayList<Byte[]>();
+		pdu=albumDAO.findbyName(userName);
+		System.out.println(pdu);
+		return pdu;
 	}
 }
