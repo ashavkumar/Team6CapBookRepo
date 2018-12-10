@@ -37,4 +37,5 @@ public interface CapBookServices {
 	Post updatePostDislikes(Post post);
 	Post addPostComment(Comment comment);
 	Profile insertAlbumPic(byte[] albumPic);
+	Post editPost(Post post);
 }

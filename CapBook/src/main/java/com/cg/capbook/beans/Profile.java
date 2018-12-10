@@ -38,9 +38,9 @@ public class Profile {
 	            joinColumns = { @JoinColumn(name="emailId") },
 	            inverseJoinColumns = { @JoinColumn(name = "friendId") })
 	private Map<Integer, Friend> friends;
-	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
+	/*@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
 	@MapKey
-	private Map<Integer, Post> posts;
+	private Map<Integer, Post> posts;*/
 	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
 	@MapKey
 	private Map<Integer, Album> albums;
@@ -71,7 +71,6 @@ public class Profile {
 		this.highestEducation = highestEducation;
 		this.relationshipStatus = relationshipStatus;
 		this.friends = friends;
-		this.posts = posts;
 	}
 	public String getEmailId() {
 		return emailId;
@@ -181,12 +180,12 @@ public class Profile {
 	public void setFriends(Map<Integer, Friend> friends) {
 		this.friends = friends;
 	}
-	public Map<Integer, Post> getPosts() {
+/*	public Map<Integer, Post> getPosts() {
 		return posts;
 	}
 	public void setPosts(Map<Integer, Post> posts) {
 		this.posts = posts;
-	}
+	}*/
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -204,7 +203,7 @@ public class Profile {
 		result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
 		result = prime * result + ((mobileNo == null) ? 0 : mobileNo.hashCode());
 		result = prime * result + ((password == null) ? 0 : password.hashCode());
-		result = prime * result + ((posts == null) ? 0 : posts.hashCode());
+		//result = prime * result + ((posts == null) ? 0 : posts.hashCode());
 		result = prime * result + Arrays.hashCode(profilePic);
 		result = prime * result + ((relationshipStatus == null) ? 0 : relationshipStatus.hashCode());
 		result = prime * result + ((securityAnswer == null) ? 0 : securityAnswer.hashCode());
@@ -285,11 +284,11 @@ public class Profile {
 				return false;
 		} else if (!password.equals(other.password))
 			return false;
-		if (posts == null) {
+		/*if (posts == null) {
 			if (other.posts != null)
 				return false;
 		} else if (!posts.equals(other.posts))
-			return false;
+			return false;*/
 		if (!Arrays.equals(profilePic, other.profilePic))
 			return false;
 		if (relationshipStatus == null) {

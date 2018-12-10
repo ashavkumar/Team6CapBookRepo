@@ -192,9 +192,14 @@ public class CapBookServicesImpl implements CapBookServices {
 	}
 	@Override
 	public Post createPost(Post post) {
-		Profile profile=profileDAO.findById(sessionEmailId).get();
-		post.setProfile(profile);
+		post.setEmailId(sessionEmailId);
 		post=postDAO.save(post);
+		return post;
+	}
+	@Override
+	public Post editPost(Post post) {
+/*		post.setEmailId(sessionEmailId);
+		post=postDAO.save(post);*/
 		return post;
 	}
 	@Override

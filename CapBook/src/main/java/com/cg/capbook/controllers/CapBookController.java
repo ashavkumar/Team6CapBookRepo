@@ -96,15 +96,17 @@ public class CapBookController {
 		List<Profile>friendList=capBookServices.getFriendList(profile.getEmailId());
 		return new ResponseEntity<List<Profile>>(friendList,HttpStatus.OK);
 	}
-	@RequestMapping(value="/createPost",method=RequestMethod.POST,produces=MediaType.ALL_VALUE)
-	ResponseEntity<Post>createPost(@RequestParam("Image") MultipartFile image,@RequestParam("postContent") String postContent) throws IOException{
-		Post post=new Post();
-		post.setPostContent(postContent);
-		FileInputStream fin=new FileInputStream(image.toString());
-		byte[] bytes = StreamUtils.copyToByteArray(fin);
-		post.setPostPic(bytes);
+	@RequestMapping(value="/createPost",method=RequestMethod.POST,produces=MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<Post>createPost(@RequestBody Post post ) throws IOException{
 		post=capBookServices.createPost(post);
-		return new ResponseEntity<>(post,HttpStatus.OK);
+		System.out.println(post);
+		return new ResponseEntity<Post>(post,HttpStatus.OK);
+	}
+	@RequestMapping(value="/editPost",method=RequestMethod.POST,produces=MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<Post>editPost(@RequestBody Post post ) throws IOException{
+		post=capBookServices.editPost(post);
+		System.out.println(post);
+		return new ResponseEntity<Post>(post,HttpStatus.OK);
 	}
 	@RequestMapping(value="/sendMessage",method=RequestMethod.POST,produces=MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> sendMessage(@RequestBody Message message){

@@ -19,30 +19,38 @@ public class Post {
 	@GeneratedValue(strategy=GenerationType.SEQUENCE)
 	private int postId;
 	private String postContent;
+	private String emailId;
 	@Column(columnDefinition="BLOB")
 	private byte[] postPic;
 	private int noOfPostLikes;
 	private int noOfPostDislikes;
-	@ManyToOne
-	@MapKey
+/*	@MapKey
 	@JoinColumn(name="emailId")
-	private Profile profile;
+	@ManyToOne
+	private Profile profile;*/
 	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
 	@MapKey
 	private Map<Integer, Comment> comments;
 	public Post() {
 		super();
 	}
-	public Post(int postId, String postContent, byte[] postPic, int noOfPostLikes, int noOfPostDislikes,
+
+
+
+	public Post(int postId, String postContent, String emailId, byte[] postPic, int noOfPostLikes, int noOfPostDislikes,
 			Map<Integer, Comment> comments) {
 		super();
 		this.postId = postId;
 		this.postContent = postContent;
+		this.emailId = emailId;
 		this.postPic = postPic;
 		this.noOfPostLikes = noOfPostLikes;
 		this.noOfPostDislikes = noOfPostDislikes;
 		this.comments = comments;
 	}
+
+
+
 	public int getPostId() {
 		return postId;
 	}
@@ -79,12 +87,25 @@ public class Post {
 	public void setComments(Map<Integer, Comment> comments) {
 		this.comments = comments;
 	}
-	public final Profile getProfile() {
+	
+public final String getEmailId() {
+		return emailId;
+	}
+
+
+
+	public final void setEmailId(String emailId) {
+		this.emailId = emailId;
+	}
+
+
+
+	/*	public final Profile getProfile() {
 		return profile;
 	}
 	public final void setProfile(Profile profile) {
 		this.profile = profile;
-	}
+	}*/
 	@Override
 	public int hashCode() {
 		final int prime = 31;
