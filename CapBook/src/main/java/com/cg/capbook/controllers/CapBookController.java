@@ -14,11 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.cg.capbook.beans.Album;
 import com.cg.capbook.beans.Friend;
 import com.cg.capbook.beans.Message;
 import com.cg.capbook.beans.Post;
@@ -102,11 +99,10 @@ public class CapBookController {
 		System.out.println(post);
 		return new ResponseEntity<Post>(post,HttpStatus.OK);
 	}
-	@RequestMapping(value="/editPost",method=RequestMethod.POST,produces=MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<Post>editPost(@RequestBody Post post ) throws IOException{
-		post=capBookServices.editPost(post);
-		System.out.println(post);
-		return new ResponseEntity<Post>(post,HttpStatus.OK);
+	@RequestMapping(value="/getPost",method=RequestMethod.POST,produces=MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<List<Post>>getPost() throws IOException{
+		List<Post> listPost=capBookServices.getPost();
+		return new ResponseEntity<List<Post>>(listPost,HttpStatus.OK);
 	}
 	@RequestMapping(value="/sendMessage",method=RequestMethod.POST,produces=MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> sendMessage(@RequestBody Message message){
@@ -125,14 +121,12 @@ public class CapBookController {
 	}
 	@PostMapping(value="/setProfilePic",consumes= {MediaType.ALL_VALUE},produces=MediaType.ALL_VALUE)
 	public ResponseEntity<byte[]> setImage(@RequestParam("Image") MultipartFile image) throws IOException {
-		System.out.println("Image");
 		storageService.store(image);
 		File file=new File("D:\\159942_Neelam_Topno\\ANGULAR\\AngularApplications\\CapbookAngular\\src\\userImage"+image.getOriginalFilename());
-		image.transferTo(file);
+		//image.transferTo(file);
 		FileInputStream fin=new FileInputStream(file);
 		byte[] bytes = StreamUtils.copyToByteArray(fin);
 		capBookServices.insertProfilePic(bytes);
-		System.out.println(bytes);
 		return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
 	}
 	@RequestMapping(value = "/getProfilePic", method = RequestMethod.GET,produces = MediaType.IMAGE_JPEG_VALUE)

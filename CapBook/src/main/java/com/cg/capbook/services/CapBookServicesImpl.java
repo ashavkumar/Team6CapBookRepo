@@ -197,10 +197,9 @@ public class CapBookServicesImpl implements CapBookServices {
 		return post;
 	}
 	@Override
-	public Post editPost(Post post) {
-/*		post.setEmailId(sessionEmailId);
-		post=postDAO.save(post);*/
-		return post;
+	public List<Post> getPost(){
+		List<Post> listPost=postDAO.findPost(sessionEmailId);
+		return listPost;
 	}
 	@Override
 	public Post updatePostLikes(Post post) {
@@ -236,5 +235,9 @@ public class CapBookServicesImpl implements CapBookServices {
 		pdu=albumDAO.findbyName(userName);
 		System.out.println(pdu);
 		return pdu;
+	}
+	public void displayFriendRequest() {
+		Profile profile=profileDAO.findById(sessionEmailId).get();
+		Map<Integer, Friend> friendMap=profile.getFriends();
 	}
 }

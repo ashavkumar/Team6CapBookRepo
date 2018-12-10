@@ -1,7 +1,6 @@
 package com.cg.capbook.beans;
 import java.util.Arrays;
 import java.util.Map;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,8 +8,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 @Entity
@@ -87,19 +84,12 @@ public class Post {
 	public void setComments(Map<Integer, Comment> comments) {
 		this.comments = comments;
 	}
-	
-public final String getEmailId() {
+	public final String getEmailId() {
 		return emailId;
 	}
-
-
-
 	public final void setEmailId(String emailId) {
 		this.emailId = emailId;
 	}
-
-
-
 	/*	public final Profile getProfile() {
 		return profile;
 	}

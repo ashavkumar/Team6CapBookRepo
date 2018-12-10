@@ -33,9 +33,10 @@ public interface CapBookServices {
 	public List<Profile> getFriendList(String emailId);
 	Profile forgotPassword(Profile profile)throws InvalidEmailIdException, UserAuthenticationFailedException;
 	Post createPost(Post post);
+	List<Post> getPost();
 	Post updatePostLikes(Post post);
 	Post updatePostDislikes(Post post);
 	Post addPostComment(Comment comment);
 	Profile insertAlbumPic(byte[] albumPic);
-	Post editPost(Post post);
+	
 }
