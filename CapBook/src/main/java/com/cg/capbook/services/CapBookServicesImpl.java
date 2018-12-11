@@ -50,7 +50,6 @@ public class CapBookServicesImpl implements CapBookServices {
 		Date today = new Date();
 		profile.setDateOfJoining(formatter.format(today).toString());
 		profile.setPassword(codecServices.encrypt(profile.getPassword()));
-		System.out.println(profile.getPassword());
 		return profileDAO.save(profile);
 	}
 	@Override
@@ -69,16 +68,14 @@ public class CapBookServicesImpl implements CapBookServices {
 			return profile1;
 		}
 		else
-				throw new UserAuthenticationFailedException();	
+			throw new UserAuthenticationFailedException();	
 	}
-
 	@Override
 	public Profile changePassword(String emailId,String newPassword) throws InvalidEmailIdException, InvalidPasswordException{
 		Profile profile=profileDAO.findById(emailId).orElseThrow(()->new InvalidEmailIdException());
 		profileDAO.changePassword(codecServices.encrypt(newPassword),profile.getEmailId());
 		return null;
 	}
-
 	@Override
 	public Profile editProfile(Profile profile) throws InvalidEmailIdException {
 		Profile profile1=profileDAO.findById(sessionEmailId).orElseThrow(()->new InvalidEmailIdException());
@@ -154,7 +151,7 @@ public class CapBookServicesImpl implements CapBookServices {
 			//Friend friend=friendDAO.findById(friends.getFriendId()).get();
 			if(friend.getFromUserId().equals(emailId)) 
 				friendProfile=profileDAO.findById(friend.getToUserId()).get();
-				//friendList2.add(friend);
+			//friendList2.add(friend);
 			else//(friend.getToUserId().equalsIgnoreCase(emailId))
 				//friendList2.add(friend);
 				friendProfile=profileDAO.findById(friend.getFromUserId()).get();
@@ -238,6 +235,7 @@ public class CapBookServicesImpl implements CapBookServices {
 	}
 	public void displayFriendRequest() {
 		Profile profile=profileDAO.findById(sessionEmailId).get();
+		@SuppressWarnings("unused")
 		Map<Integer, Friend> friendMap=profile.getFriends();
 	}
 }

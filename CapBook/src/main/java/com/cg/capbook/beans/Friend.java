@@ -16,12 +16,12 @@ public class Friend {
 	private String fromUserId;
 	private String toUserId;
 	@MapKey
-    @ManyToMany(fetch = FetchType.LAZY,
-    cascade = {
-        CascadeType.PERSIST,
-        CascadeType.MERGE
-    },
-    mappedBy = "friends")
+	@ManyToMany(fetch = FetchType.LAZY,
+	cascade = {
+			CascadeType.PERSIST,
+			CascadeType.MERGE
+	},
+	mappedBy = "friends")
 	private Map<String, Profile> profiles;
 	@ManyToMany
 	@MapKey

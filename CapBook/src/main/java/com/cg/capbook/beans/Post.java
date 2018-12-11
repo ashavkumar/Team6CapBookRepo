@@ -21,19 +21,12 @@ public class Post {
 	private byte[] postPic;
 	private int noOfPostLikes;
 	private int noOfPostDislikes;
-/*	@MapKey
-	@JoinColumn(name="emailId")
-	@ManyToOne
-	private Profile profile;*/
 	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
 	@MapKey
 	private Map<Integer, Comment> comments;
 	public Post() {
 		super();
 	}
-
-
-
 	public Post(int postId, String postContent, String emailId, byte[] postPic, int noOfPostLikes, int noOfPostDislikes,
 			Map<Integer, Comment> comments) {
 		super();
@@ -45,9 +38,6 @@ public class Post {
 		this.noOfPostDislikes = noOfPostDislikes;
 		this.comments = comments;
 	}
-
-
-
 	public int getPostId() {
 		return postId;
 	}
@@ -90,12 +80,6 @@ public class Post {
 	public final void setEmailId(String emailId) {
 		this.emailId = emailId;
 	}
-	/*	public final Profile getProfile() {
-		return profile;
-	}
-	public final void setProfile(Profile profile) {
-		this.profile = profile;
-	}*/
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -140,6 +124,6 @@ public class Post {
 	@Override
 	public String toString() {
 		return "Post [postId=" + postId + ", postContent=" + postContent + ", postPic=" + Arrays.toString(postPic)
-				+ ", noOfPostLikes=" + noOfPostLikes + ", noOfPostDislikes=" + noOfPostDislikes + "]";
+		+ ", noOfPostLikes=" + noOfPostLikes + ", noOfPostDislikes=" + noOfPostDislikes + "]";
 	}
 }

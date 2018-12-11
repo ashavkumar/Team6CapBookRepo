@@ -52,7 +52,6 @@ public class CapBookController {
 		profile=capBookServices.forgotPassword(profile);
 		return new ResponseEntity<Profile>(profile,HttpStatus.OK);
 	}
-
 	@RequestMapping(value="/changePassword",method=RequestMethod.POST,consumes=MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<Profile> changePassword(@RequestBody Profile profile) throws InvalidEmailIdException, InvalidPasswordException {
 		System.out.println("start");	
@@ -60,13 +59,11 @@ public class CapBookController {
 		System.out.println("done");
 		return new ResponseEntity<Profile>(profile,HttpStatus.OK);
 	}
-
 	@RequestMapping(value="/editProfile",method=RequestMethod.POST,consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<Profile> editProfile(@RequestBody Profile profile) throws InvalidEmailIdException{	
 		profile=capBookServices.editProfile(profile);
 		return new ResponseEntity<Profile>(profile,HttpStatus.OK);
 	}
-
 	@RequestMapping(value="/findUsers",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<List<Profile>> findUsers(@RequestParam String userName) throws NoUserFoundException{	
 		List<Profile>listUser=null;		
@@ -122,8 +119,7 @@ public class CapBookController {
 	@PostMapping(value="/setProfilePic",consumes= {MediaType.ALL_VALUE},produces=MediaType.ALL_VALUE)
 	public ResponseEntity<byte[]> setImage(@RequestParam("Image") MultipartFile image) throws IOException {
 		storageService.store(image);
-		File file=new File("D:\\159942_Neelam_Topno\\ANGULAR\\AngularApplications\\CapbookAngular\\src\\userImage"+image.getOriginalFilename());
-		//image.transferTo(file);
+		File file=new File("D:\\TRAINING_KESHAV\\Angular\\AngularApplication\\CapBookAngular\\src\\ProfilePic\\"+image.getOriginalFilename());
 		FileInputStream fin=new FileInputStream(file);
 		byte[] bytes = StreamUtils.copyToByteArray(fin);
 		capBookServices.insertProfilePic(bytes);
@@ -137,7 +133,7 @@ public class CapBookController {
 	public ResponseEntity<byte[]> setAlbumImage(@RequestParam("Image") MultipartFile image) throws IOException {
 		System.out.println("Image");
 		storageService.store(image);
-		File file=new File("D:\\159942_Neelam_Topno\\ANGULAR\\AngularApplications\\CapbookAngular\\src\\userImage"+image.getOriginalFilename());
+		File file=new File("D:\\TRAINING_KESHAV\\Angular\\AngularApplication\\CapBookAngular\\src\\userImage"+image.getOriginalFilename());
 		image.transferTo(file);
 		FileInputStream fin=new FileInputStream(file);
 		byte[] bytes = StreamUtils.copyToByteArray(fin);

@@ -6,5 +6,4 @@ import com.cg.capbook.beans.Album;
 public interface AlbumDAO extends JpaRepository<Album, Integer>{
 	@Query(value="select image from Album where email_id=?1")
 	List<Byte[]> findbyName(String userEmailId);
-}
-	
+}	

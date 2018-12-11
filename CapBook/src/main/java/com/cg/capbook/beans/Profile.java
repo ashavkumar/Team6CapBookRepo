@@ -32,15 +32,12 @@ public class Profile {
 	private String designation;
 	private String highestEducation;
 	private String relationshipStatus;
-	 @ManyToMany(fetch = FetchType.LAZY,
-	            cascade = CascadeType.ALL)
-	    @JoinTable(name = "profile_friend",
-	            joinColumns = { @JoinColumn(name="emailId") },
-	            inverseJoinColumns = { @JoinColumn(name = "friendId") })
+	@ManyToMany(fetch = FetchType.LAZY,
+			cascade = CascadeType.ALL)
+	@JoinTable(name = "profile_friend",
+	joinColumns = { @JoinColumn(name="emailId") },
+	inverseJoinColumns = { @JoinColumn(name = "friendId") })
 	private Map<Integer, Friend> friends;
-	/*@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
-	@MapKey
-	private Map<Integer, Post> posts;*/
 	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
 	@MapKey
 	private Map<Integer, Album> albums;
@@ -180,12 +177,6 @@ public class Profile {
 	public void setFriends(Map<Integer, Friend> friends) {
 		this.friends = friends;
 	}
-/*	public Map<Integer, Post> getPosts() {
-		return posts;
-	}
-	public void setPosts(Map<Integer, Post> posts) {
-		this.posts = posts;
-	}*/
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -203,7 +194,6 @@ public class Profile {
 		result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
 		result = prime * result + ((mobileNo == null) ? 0 : mobileNo.hashCode());
 		result = prime * result + ((password == null) ? 0 : password.hashCode());
-		//result = prime * result + ((posts == null) ? 0 : posts.hashCode());
 		result = prime * result + Arrays.hashCode(profilePic);
 		result = prime * result + ((relationshipStatus == null) ? 0 : relationshipStatus.hashCode());
 		result = prime * result + ((securityAnswer == null) ? 0 : securityAnswer.hashCode());
@@ -279,16 +269,11 @@ public class Profile {
 			if (other.mobileNo != null)
 				return false;
 		} else if (!mobileNo.equals(other.mobileNo))
-		if (password == null) {
-			if (other.password != null)
+			if (password == null) {
+				if (other.password != null)
+					return false;
+			} else if (!password.equals(other.password))
 				return false;
-		} else if (!password.equals(other.password))
-			return false;
-		/*if (posts == null) {
-			if (other.posts != null)
-				return false;
-		} else if (!posts.equals(other.posts))
-			return false;*/
 		if (!Arrays.equals(profilePic, other.profilePic))
 			return false;
 		if (relationshipStatus == null) {
